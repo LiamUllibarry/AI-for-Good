@@ -36,3 +36,25 @@ def naive_bayes(table, evidence_row, target):
   neg,pos = compute_probs(neg_1, pos_1)
   #return your 2 results in a list
   return [neg, pos]
+
+def metrics(zipped_list):
+  #asserts here
+  assert isinstance(zipped_list, list), 'zipped_list should be a list'
+  assert all(isinstance(item, list) for item in zipped_list), 'zipped_list should be a list of lists'
+  assert all(len(item) == 2 for item in zipped_list), 'zipped_list should be a zipped list of pairs'
+  assert all(isinstance(pair, list) and len(pair) >= 2 and all(isinstance(value, int) and value >= 0 for value in pair) for pair in zipped_list), 'zipped_list should be a zipped list where each pair contains two non-negative integers'
+  #body of function below
+  tn = sum([1 if pair==[0,0] else 0 for pair in zipped_list])
+  tp = sum([1 if pair==[1,1] else 0 for pair in zipped_list])
+  fp = sum([1 if pair==[1,0] else 0 for pair in zipped_list])
+  fn = sum([1 if pair==[0,1] else 0 for pair in zipped_list]) 
+
+  #now can compute precicision, recall, f1, accuracy. Watch for divide by 0.
+  precision= tp/(tp+fp) if (tp + fp)!=0 else 0
+  recall = tp/(tp+fn) if (tp + fn)!=0 else 0
+  accuracy = (tp + tn)/(tp + tn + fp + fn) if (tp + tn + fp + fn)!=0 else 0
+  f1 = 2*((precision * recall)/(precision + recall)) if (precision + recall)!=0 else 0
+  #now build dictionary with the 4 measures
+  measures_dict = {'Accuracy':accuracy, 'F1':f1, 'Precision':precision, 'Recall':recall}
+  #finally, return the dictionary
+  return measures_dict
